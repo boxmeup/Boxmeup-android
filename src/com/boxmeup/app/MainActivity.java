@@ -1,7 +1,9 @@
 package com.boxmeup.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.http.SslError;
 import android.os.Bundle;
@@ -10,7 +12,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
@@ -20,8 +24,6 @@ import com.boxmeup.app.scans.ScanResult;
 import com.boxmeup.app.scans.UpcScanResult;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MainActivity extends Activity {
 	
@@ -29,6 +31,7 @@ public class MainActivity extends Activity {
 	ImageView mImageView;
 	boolean loggedIn = false;
 	private String currentContainerSlug;
+	final Context boxmeupApp = this;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,7 @@ public class MainActivity extends Activity {
 		mWebView.getSettings().setJavaScriptEnabled(true);
 		mWebView.loadUrl(getString(R.string.url_source));
 		mWebView.setWebViewClient(new BoxmeupWebViewClient());
+		mWebView.setWebChromeClient(new BoxmeupWebChromeClient());
 		
 		// Initialize the javascript interface
 		mWebView.addJavascriptInterface(new BoxmeupJavascriptInterface(this), getString(R.string.javascript_interface));
@@ -170,6 +174,37 @@ public class MainActivity extends Activity {
 			mImageView.setVisibility(View.GONE);
 			view.setVisibility(View.VISIBLE);
 		}
+	}
+
+	/**
+	 * Nested class that controls webview chrome events.
+	 */
+	private class BoxmeupWebChromeClient extends WebChromeClient {
+
+		/**
+		 * Handle a webview's JS confirm dialog
+		 */
+	    @Override
+	    public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
+	        new AlertDialog.Builder(boxmeupApp)
+		        .setTitle(R.string.app_name)
+		        .setMessage(message)
+		        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						result.confirm();
+					}
+				})
+
+		        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						result.cancel();
+					}
+		        })
+		        .create()
+		        .show();
+
+	        return true;
+	    }
 	}
 	
 	/**
