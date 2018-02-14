@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Boxmeup</string>
+    <string name="url_source">https://beta.boxmeupapp.com</string>
+    <string name="valid_host">beta.boxmeupapp.com</string>
+    <string name="javascript_interface">BoxmeupAndroid</string>
+    <string name="qr_scan">Scan Label</string>
+    <string name="upc_scan">Scan Product</string>
+    <string name="qr_scan_prompt">Scan a Boxmeup label</string>
+</resources>

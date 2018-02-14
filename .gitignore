@@ -1,6 +1,9 @@
-build
-bin
-build.xml
-manifest.mf
-local.properties
-gen/com/boxmeup/app/R.java
+*.iml
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+.externalNativeBuild
